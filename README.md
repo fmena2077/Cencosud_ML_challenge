@@ -12,7 +12,7 @@ Autor: Francisco Mena
   
 
 * main_script.py: Script que colecta la data, crea nuevos atributos, 
-  realiza un EDA, encuentra el mejor modelo, y hace inferencia para una fecha dada. 
+  realiza un EDA, encuentra el mejor modelo, y dada una fecha, predice la venta de carnes en 2 semanas más. 
   
 
 * modelo_carne_Cencosud.joblib: El modelo generado al correr main_script.py

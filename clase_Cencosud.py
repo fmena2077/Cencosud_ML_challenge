@@ -30,8 +30,15 @@ class modeloCencosud:
         """
         Function to obtain the data from the database
         
+        Parameters
+        ----------
         table_name: str
             Name of the SQL Table        
+            
+        Returns
+        -------
+        The data of the SQL table as a dataframe
+        
         """
         
         # if type(table_name!= str):
@@ -66,8 +73,15 @@ class modeloCencosud:
         """
         Function to generate the new features that will be used during training
         
+        Parameters
+        ----------
         df: pandas dataframe
             Dataframe with the meat sales information
+            
+        Returns
+        -------
+        Dataframe with the new features
+        
         """
         
         
@@ -121,9 +135,16 @@ class modeloCencosud:
     def ExploratoryDataAnalysis(df):
         """
         Function to plot different features vs Meat Sales
-        
+
+        Parameters
+        ----------        
         df: pandas dataframe
             Dataframe with the meat sales information
+        
+        Returns
+        -------
+        Plots describing patterns in meat sales
+        
         """
         
         folder2save = os.path.join( os.getcwd(), "Plots")

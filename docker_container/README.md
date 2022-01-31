@@ -9,7 +9,9 @@ To run the image:
 docker run -e "DATE=< date value >" < image name >
 
 Example:
+
 docker build -t meatsales .
+
 docker run -e "DATE=2019-12-13" meatsales 
 
 

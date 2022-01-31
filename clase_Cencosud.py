@@ -19,6 +19,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import ElasticNetCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+import shap
 import lightgbm as lgb
 import joblib
 
@@ -123,6 +124,16 @@ class modeloCencosud:
         df["FECHA"].isin( CL_holidays ).sum()
         df["is_holiday"] = [x in CL_holidays for x in df["FECHA"]]
 
+
+        #EDA shows that meat sales are higher the week of Sept 18
+        df["week_of_18Sept"] = (df["month"]==9) & ( df["day"].isin( np.arange(13,18) ) )
+        
+        
+        #EDA shows that meat sales are higher near xmas and near New Years
+        df["is_Xmas"] = (df["month"]==12) & ( df["day"].isin( np.arange(21,25) ) )
+        
+        df["is_NewYears"] = (df["month"]==12) & ( df["day"].isin( np.arange(28,32) ) )
+
         
         #Sort dataframe by date, and return columns that are relevant for training
         df.sort_values(by = "FECHA", inplace = True)
@@ -179,12 +190,27 @@ class modeloCencosud:
         plt.savefig(folder2save + "/TimeSeries_Sales.png", dpi = 150, bbox_inches = "tight")        
         plt.close()
 
-        #There are more sales on Sept and Dec
+        #Sales per year
         df["year"] = df.FECHA.dt.year
         sns.boxplot(data = df, x = "year", y = "VENTAS")
-        plt.savefig(folder2save + "/Boxplot_SalesPerMonth.png", dpi = 150, bbox_inches = "tight")
+        plt.savefig(folder2save + "/Boxplot_SalesPerYear.png", dpi = 150, bbox_inches = "tight")
         plt.close()
-       
+
+        #Sales for September
+        dfaux = df.loc[ (df["month"]==9) ]
+        plt.figure(figsize = (16,6))
+        sns.boxplot(data = dfaux, x =  "day", y = "VENTAS")
+        plt.savefig(folder2save + "/Boxplot_SalesForSeptember.png", dpi = 150, bbox_inches = "tight")
+        plt.close()
+
+    
+        #Sales for December
+        dfaux = df.loc[ (df["month"]==12) ]
+        plt.figure(figsize = (16,6))
+        sns.boxplot(data = dfaux, x =  "day", y = "VENTAS")
+        plt.savefig(folder2save + "/Boxplot_SalesForDecember.png", dpi = 150, bbox_inches = "tight")
+        plt.close()
+
         
 #%%
 
@@ -208,7 +234,8 @@ class modeloCencosud:
         
         
         featcols = ['TIENDA', 'day_x', 'day_y', 'day_name', 'dayofweek_x', 'dayofweek_y', 'month_x',
-        'month_y', 'weekend', 'is_holiday', 'VENTAS']
+                    'week_of_18Sept', 'is_Xmas', 'is_NewYears',
+                    'month_y', 'weekend', 'is_holiday', 'VENTAS']
 
         df.sort_values(by = "FECHA", inplace = True)
 
@@ -413,6 +440,19 @@ class modeloCencosud:
         
         joblib.dump(dictio_model, 'modelo_carne_Cencosud.joblib')
         
+
+        """ SHAP ANALYSIS """
+        explainer = shap.TreeExplainer(best_model)
+        shap_values = explainer.shap_values(Xtrain_scaled)
+
+        folder2save_plot = os.path.join( os.getcwd(), "Plots")
+        
+        if not os.path.exists( folder2save_plot ):
+            os.mkdir( folder2save_plot )
+
+        plt.figure()
+        shap.summary_plot(shap_values, Xtrain_scaled, feature_names=X.columns, show=False )
+        plt.savefig(  os.path.join(folder2save_plot, "SHAP_ModelExplanation.png"), dpi = 150, bbox_inches="tight" )
         
         return dictio_model
         
@@ -449,7 +489,8 @@ class modeloCencosud:
         
         """ load model and predict """                
         featcols = ['TIENDA', 'day_x', 'day_y', 'day_name', 'dayofweek_x', 'dayofweek_y', 'month_x',
-        'month_y', 'weekend', 'is_holiday']
+                    'week_of_18Sept', 'is_Xmas', 'is_NewYears',
+                    'month_y', 'weekend', 'is_holiday']
 
         df2 = df[featcols].copy()
 

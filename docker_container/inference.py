@@ -75,10 +75,21 @@ def lets_predict_meat_sales(date):
     df["is_holiday"] = [x in CL_holidays for x in df["FECHA"]]
 
 
+    #EDA shows that meat sales are higher the week of Sept 18
+    df["week_of_18Sept"] = (df["month"]==9) & ( df["day"].isin( np.arange(13,18) ) )
+    
+    
+    #EDA shows that meat sales are higher near xmas and near New Years
+    df["is_Xmas"] = (df["month"]==12) & ( df["day"].isin( np.arange(21,25) ) )
+    
+    df["is_NewYears"] = (df["month"]==12) & ( df["day"].isin( np.arange(28,32) ) )
+
+
     
     """ load model and predict """                
     featcols = ['TIENDA', 'day_x', 'day_y', 'day_name', 'dayofweek_x', 'dayofweek_y', 'month_x',
-    'month_y', 'weekend', 'is_holiday']
+                'week_of_18Sept', 'is_Xmas', 'is_NewYears',
+                'month_y', 'weekend', 'is_holiday']
 
     df2 = df[featcols].copy()
 
@@ -128,4 +139,3 @@ def lets_predict_meat_sales(date):
 DATE = os.environ["DATE"]
 lets_predict_meat_sales(DATE)
 
-lets_predict_meat_sales("2019-12-13")

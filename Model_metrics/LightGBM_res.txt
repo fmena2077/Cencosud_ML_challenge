@@ -1,7 +1,7 @@
 Name: LightGBM
 Model: LGBMRegressor(objective='regression', random_state=42)
 RMSE:
-484.51
+484.96
 MAE:
-296.0
+292.0
 

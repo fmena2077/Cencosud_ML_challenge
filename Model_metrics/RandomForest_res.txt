@@ -1,0 +1,8 @@
+Name: RandomForest
+Model: RandomForestRegressor(criterion='absolute_error', max_depth=10,
+                      n_estimators=200, random_state=42)
+RMSE:
+535.87
+MAE:
+293.0
+

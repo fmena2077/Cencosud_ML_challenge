@@ -8,7 +8,7 @@ Created on Fri Jan 28 16:48:44 2022
 import pandas as pd
 
 import os
-os.chdir("C:\\Users\\franc\\projects\\letstf2gpu\\Cencosud")
+
 
 from clase_Cencosud import modeloCencosud 
 
